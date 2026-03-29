@@ -1,414 +1,1014 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>API Test Case Generator</title>
+<title>QA API Tester</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;background:#f5f5f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
-.container{max-width:880px;margin:0 auto}
-h1{font-size:22px;font-weight:600;margin-bottom:.25rem}
-.subtitle{font-size:13px;color:#666;margin-bottom:1.5rem}
-.card{background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
-.card h2{font-size:15px;font-weight:600;margin-bottom:1rem}
-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;margin-top:14px}
-label:first-of-type{margin-top:0}
-input,select,textarea{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
-input:focus,select:focus,textarea:focus{border-color:#555}
-textarea{resize:vertical;min-height:72px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.hrow input{flex:1;margin:0}
-button.rm{padding:5px 10px;font-size:12px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#888;cursor:pointer}
-button.rm:hover{background:#f5f5f0}
-button.pri{padding:11px 24px;border:none;border-radius:8px;background:#1a1a1a;color:#fff;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s}
-button.pri:hover{background:#333}
-button.pri:disabled{background:#aaa;cursor:not-allowed}
-button.sec{padding:9px 18px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer;transition:background .15s}
-button.sec:hover{background:#f5f5f0}
-button.sml{padding:5px 12px;font-size:12px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#666;cursor:pointer}
-button.sml:hover{background:#f5f5f0}
-.actions{display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap}
-.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.chip{padding:5px 12px;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;color:#666;transition:all .15s;user-select:none}
-.chip.on{border-color:#1a1a1a;color:#1a1a1a;font-weight:500;background:#f5f5f0}
-.key-box{background:#f0f7ff;border:1px solid #bcd4f0;border-radius:10px;padding:1.25rem;margin-bottom:1rem}
-.key-box label{color:#2c5f8a;margin-top:0}
-.key-note{font-size:11px;color:#5a8ab0;margin-top:5px;line-height:1.6}
-.key-note a{color:#1a6bb5}
-.gemini-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#1a6bb5;background:#e8f0fe;padding:3px 10px;border-radius:20px;margin-left:8px;font-weight:500;vertical-align:middle}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
-.stat{background:#f5f5f0;border-radius:8px;padding:12px}
-.stat-n{font-size:24px;font-weight:600}
-.stat-l{font-size:11px;color:#888;margin-top:2px}
-.export-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
-.filter-bar span{font-size:12px;color:#888}
-.filter-btn{padding:4px 12px;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#fff;color:#666;transition:all .15s}
-.filter-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.tcase{border:1px solid #e5e5e0;border-radius:8px;padding:12px;margin-bottom:8px;transition:border-color .15s}
-.tcase:hover{border-color:#ccc}
-.tcase-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
-.tcase-id{font-size:11px;font-weight:700;color:#aaa;min-width:46px}
-.tcase-name{font-size:13px;font-weight:600;flex:1}
-.tcase-desc{font-size:12px;color:#666;margin-bottom:5px}
-.tcase-assert{font-size:11px;color:#555;margin-bottom:4px}
-.tcase-body{font-size:11px;font-family:monospace;color:#444;background:#f7f7f5;padding:8px 10px;border-radius:6px;white-space:pre-wrap;word-break:break-all;margin-top:5px}
-.tcase-note{font-size:11px;color:#999;margin-top:4px;font-style:italic}
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.b-green{background:#e6f4ea;color:#1e7e34}
-.b-blue{background:#e8f0fe;color:#1557b0}
-.b-yellow{background:#fff8e0;color:#856404}
-.b-red{background:#fce8e6;color:#c5221f}
-.b-gray{background:#f0f0f0;color:#555}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#result-area{display:none}
-.err{background:#fce8e6;border:1px solid #f5c6c6;border-radius:8px;padding:1rem;color:#c5221f;font-size:13px;margin-top:.75rem;display:none;line-height:1.5}
-.ok{background:#e6f4ea;border:1px solid #b7dfbf;border-radius:8px;padding:.75rem 1rem;color:#1e7e34;font-size:13px;margin-top:.75rem;display:none}
-@media(max-width:600px){.row{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --card: #1c2030;
+    --border: #2a2f42;
+    --accent: #00e5a0;
+    --accent2: #0099ff;
+    --danger: #ff4d6d;
+    --warn: #ffbe0b;
+    --text: #e8eaf0;
+    --muted: #6b7394;
+    --success: #00e5a0;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 18px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+  .badge {
+    background: var(--accent);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 61px);
+  }
+
+  /* ── SIDEBAR (History) ── */
+  .sidebar {
+    width: 270px;
+    min-width: 270px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-header {
+    padding: 16px 20px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .clear-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 0.72rem;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 600;
+  }
+  .history-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+  .history-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .history-item:hover { background: var(--card); border-left-color: var(--accent); }
+  .history-item .method-pill {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+  .history-item .url-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+    word-break: break-all;
+    line-height: 1.4;
+  }
+  .history-item .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .no-history {
+    padding: 30px 20px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── REQUEST PANEL ── */
+  .request-panel {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .url-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  select, input, textarea {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    border-radius: 8px;
+    outline: none;
+    transition: border 0.2s;
+  }
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .method-select {
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    min-width: 110px;
+  }
+
+  .url-input {
+    flex: 1;
+    padding: 10px 16px;
+  }
+
+  .send-btn {
+    padding: 10px 28px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  .send-btn:hover { background: #00ffb3; transform: translateY(-1px); }
+  .send-btn:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .tab {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--muted);
+    font-family: var(--sans);
+    transition: all 0.15s;
+  }
+  .tab.active {
+    background: var(--card);
+    border-color: var(--border);
+    color: var(--accent);
+  }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Headers table */
+  .headers-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .header-row input {
+    padding: 7px 12px;
+    width: 100%;
+  }
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--danger);
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { background: var(--danger); color: #fff; }
+  .add-row-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 600;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+  .add-row-btn:hover { background: var(--card); }
+
+  .body-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+    font-size: 0.82rem;
+  }
+
+  /* ── RESPONSE PANEL ── */
+  .response-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 28px 28px;
+    background: var(--bg);
+  }
+
+  .response-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .response-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+  }
+  .status-badge {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+  }
+  .time-badge {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--card);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+  .size-badge {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--card);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .copy-btn {
+    margin-left: auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .response-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  pre {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-x: auto;
+    min-height: 60px;
+  }
+
+  .placeholder-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--muted);
+    text-align: center;
+    gap: 10px;
+  }
+  .placeholder-msg .icon { font-size: 2.5rem; opacity: 0.4; }
+  .placeholder-msg p { font-size: 0.85rem; }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--accent);
+    font-size: 0.85rem;
+    padding: 20px 0;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Method colors */
+  .GET    { background: #0099ff22; color: #0099ff; border: 1px solid #0099ff44; }
+  .POST   { background: #00e5a022; color: #00e5a0; border: 1px solid #00e5a044; }
+  .PUT    { background: #ffbe0b22; color: #ffbe0b; border: 1px solid #ffbe0b44; }
+  .PATCH  { background: #ff9f4322; color: #ff9f43; border: 1px solid #ff9f4344; }
+  .DELETE { background: #ff4d6d22; color: #ff4d6d; border: 1px solid #ff4d6d44; }
+
+  .s2xx { background: #00e5a022; color: #00e5a0; }
+  .s3xx { background: #0099ff22; color: #0099ff; }
+  .s4xx { background: #ffbe0b22; color: #ffbe0b; }
+  .s5xx { background: #ff4d6d22; color: #ff4d6d; }
+
+  /* JSON Syntax */
+  .json-key   { color: #79d4f1; }
+  .json-str   { color: #a8ff78; }
+  .json-num   { color: #ffbe0b; }
+  .json-bool  { color: #ff9f43; }
+  .json-null  { color: #ff4d6d; }
+
+  /* Error box */
+  .error-box {
+    background: #ff4d6d11;
+    border: 1px solid #ff4d6d44;
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--danger);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  /* ── AUTH STYLES ── */
+  .auth-section { padding: 4px 0; }
+  .auth-type-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .auth-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 1px; white-space: nowrap; }
+  .auth-type-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .auth-pill {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .auth-pill:hover { color: var(--text); border-color: var(--accent); }
+  .auth-pill.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .auth-content { display: none; }
+  .auth-content.active { display: block; }
+  .auth-info {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .auth-field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 1px; }
+  .auth-input { padding: 9px 14px; width: 100%; }
+  .auth-hint {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .auth-hint code {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+  .eye-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 10px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .eye-btn:hover { border-color: var(--accent); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .url-row { flex-wrap: wrap; }
+    .send-btn { width: 100%; }
+  }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <h1>API Test Case Generator <span class="gemini-badge">✦ Gemini</span></h1>
-  <p class="subtitle">Enter API details → AI generates test cases → export to Postman</p>
+<header>
+  <div class="logo">QA <span>API</span> Tester</div>
+  <div class="badge">BETA</div>
+</header>
 
-  <div class="key-box">
-    <label>Google Gemini API Key (free)</label>
-    <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off"/>
-    <div class="key-note">
-      Get your free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> — no credit card needed.
-      Your key never leaves your browser.
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      HISTORY
+      <button class="clear-btn" onclick="clearHistory()">CLEAR ALL</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="no-history">No requests yet.<br/>Send your first API call!</div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>Endpoint details</h2>
-    <div class="row">
-      <div>
-        <label>Base URL</label>
-        <input id="baseUrl" placeholder="https://api.example.com"/>
-      </div>
-      <div>
-        <label>Endpoint path</label>
-        <input id="endpoint" placeholder="/users/{id}"/>
-      </div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <div>
-        <label>HTTP method</label>
-        <select id="method">
-          <option>GET</option><option>POST</option><option>PUT</option>
-          <option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option>
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- REQUEST PANEL -->
+    <div class="request-panel">
+
+      <!-- URL ROW -->
+      <div class="url-row">
+        <select class="method-select" id="method" onchange="updateMethodColor()">
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="DELETE">DELETE</option>
         </select>
+        <input class="url-input" type="text" id="urlInput"
+          placeholder="https://api.example.com/endpoint"
+          value="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCPGCnMzgCepVR5NPIdWbtyj7RIbM6ljq0"/>
+        <button class="send-btn" id="sendBtn" onclick="sendRequest()">▶ Send</button>
       </div>
-      <div>
-        <label>Auth type</label>
-        <select id="auth" onchange="toggleAuth()">
-          <option value="none">None</option>
-          <option value="bearer">Bearer token</option>
-          <option value="basic">Basic auth</option>
-          <option value="apikey">API key (header)</option>
-          <option value="apikey_q">API key (query)</option>
-        </select>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('headers', this)">Headers</button>
+        <button class="tab" onclick="switchTab('body', this)">Body</button>
+        <button class="tab" onclick="switchTab('params', this)">Params</button>
+        <button class="tab" onclick="switchTab('auth', this)">🔐 Auth</button>
+      </div>
+
+      <!-- HEADERS TAB -->
+      <div class="tab-content active" id="tab-headers">
+        <div id="headersContainer">
+          <div class="header-row">
+            <input type="text" placeholder="Key" value="Content-Type"/>
+            <input type="text" placeholder="Value" value="application/json"/>
+            <button class="icon-btn" onclick="removeHeaderRow(this)">×</button>
+          </div>
+        </div>
+        <button class="add-row-btn" onclick="addHeaderRow()">+ Add Header</button>
+      </div>
+
+      <!-- BODY TAB -->
+      <div class="tab-content" id="tab-body">
+        <textarea class="body-textarea" id="bodyInput" placeholder='{"key": "value"}'>{
+  "contents": [
+    {
+      "parts": [
+        {
+          "text": "Explain how a rainbow forms in 2 sentences."
+        }
+      ]
+    }
+  ]
+}</textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="add-row-btn" onclick="formatJSON()">⚡ Format JSON</button>
+          <button class="add-row-btn" onclick="clearBody()">🗑 Clear</button>
+        </div>
+      </div>
+
+      <!-- PARAMS TAB -->
+      <div class="tab-content" id="tab-params">
+        <div id="paramsContainer">
+          <div class="header-row">
+            <input type="text" placeholder="Key" value="key"/>
+            <input type="text" placeholder="Value" value="AIzaSyCPGCnMzgCepVR5NPIdWbtyj7RIbM6ljq0"/>
+            <button class="icon-btn" onclick="removeHeaderRow(this)">×</button>
+          </div>
+        </div>
+        <button class="add-row-btn" onclick="addParamRow()">+ Add Param</button>
+      </div>
+
+      <!-- AUTH TAB -->
+      <div class="tab-content" id="tab-auth">
+        <div class="auth-section">
+          <div class="auth-type-row">
+            <label class="auth-label">Auth Type</label>
+            <div class="auth-type-pills">
+              <button class="auth-pill active" onclick="switchAuth('none', this)">No Auth</button>
+              <button class="auth-pill" onclick="switchAuth('bearer', this)">Bearer Token</button>
+              <button class="auth-pill" onclick="switchAuth('basic', this)">Basic Auth</button>
+              <button class="auth-pill" onclick="switchAuth('apikey', this)">API Key</button>
+            </div>
+          </div>
+          <div class="auth-content active" id="auth-none">
+            <div class="auth-info">🔓 No authentication will be sent with this request.</div>
+          </div>
+          <div class="auth-content" id="auth-bearer">
+            <div class="auth-field-group">
+              <label class="field-label">Token</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="password" id="bearerToken" class="auth-input" placeholder="Paste your Bearer / JWT token here..."/>
+                <button class="eye-btn" onclick="toggleVisibility('bearerToken', this)">👁</button>
+              </div>
+              <div class="auth-hint">Sends as: <code>Authorization: Bearer &lt;token&gt;</code></div>
+            </div>
+          </div>
+          <div class="auth-content" id="auth-basic">
+            <div class="auth-field-group">
+              <label class="field-label">Username</label>
+              <input type="text" id="basicUser" class="auth-input" placeholder="Enter username"/>
+            </div>
+            <div class="auth-field-group" style="margin-top:10px;">
+              <label class="field-label">Password</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="password" id="basicPass" class="auth-input" placeholder="Enter password"/>
+                <button class="eye-btn" onclick="toggleVisibility('basicPass', this)">👁</button>
+              </div>
+              <div class="auth-hint">Sends as: <code>Authorization: Basic &lt;base64(user:pass)&gt;</code></div>
+            </div>
+          </div>
+          <div class="auth-content" id="auth-apikey">
+            <div class="auth-field-group">
+              <label class="field-label">Key Name</label>
+              <input type="text" id="apiKeyName" class="auth-input" placeholder="e.g. X-API-Key, api_key, Authorization"/>
+            </div>
+            <div class="auth-field-group" style="margin-top:10px;">
+              <label class="field-label">Key Value</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="password" id="apiKeyValue" class="auth-input" placeholder="Paste your API key here..."/>
+                <button class="eye-btn" onclick="toggleVisibility('apiKeyValue', this)">👁</button>
+              </div>
+            </div>
+            <div class="auth-field-group" style="margin-top:10px;">
+              <label class="field-label">Add To</label>
+              <select id="apiKeyLocation" class="method-select" style="min-width:180px;">
+                <option value="header">Request Header</option>
+                <option value="query">Query Params</option>
+              </select>
+              <div class="auth-hint">Header → <code>KeyName: KeyValue</code> &nbsp;|&nbsp; Query → <code>?KeyName=KeyValue</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /request-panel -->
+
+    <!-- RESPONSE PANEL -->
+    <div class="response-panel" id="responsePanel">
+      <div class="placeholder-msg" id="placeholderMsg">
+        <div class="icon">🚀</div>
+        <p>Hit <strong>Send</strong> to fire your first request!</p>
+        <p style="font-size:0.75rem;opacity:0.6">Response will appear here</p>
       </div>
     </div>
-    <div id="auth-detail" style="display:none;margin-top:12px">
-      <label id="auth-label">Token / Key value</label>
-      <input id="auth-val" placeholder="your-token-here"/>
-    </div>
-    <label>Request body (JSON) — leave blank for GET / DELETE</label>
-    <textarea id="body" placeholder='{"name":"John","email":"john@example.com","age":25}'></textarea>
-    <label>Expected success status</label>
-    <input id="expected" value="200" placeholder="200, 201"/>
-  </div>
 
-  <div class="card">
-    <h2>Headers</h2>
-    <div id="headers-list">
-      <div class="hrow">
-        <input placeholder="Key  e.g. Content-Type" class="hk"/>
-        <input placeholder="Value  e.g. application/json" class="hv"/>
-        <button class="rm" onclick="rmRow(this)">✕</button>
-      </div>
-    </div>
-    <button class="sml" style="margin-top:6px" onclick="addHeader()">+ Add header</button>
-    <h2 style="margin-top:1.25rem">Path / query parameters</h2>
-    <div id="params-list">
-      <div class="hrow">
-        <input placeholder="Name  e.g. id" class="pk"/>
-        <input placeholder="Example value  e.g. 123" class="pv"/>
-        <button class="rm" onclick="rmRow(this)">✕</button>
-      </div>
-    </div>
-    <button class="sml" style="margin-top:6px" onclick="addParam()">+ Add param</button>
-  </div>
-
-  <div class="card">
-    <h2>Test categories</h2>
-    <div class="chip-row">
-      <span class="chip on" data-cat="happy">Happy path</span>
-      <span class="chip on" data-cat="missing">Missing fields</span>
-      <span class="chip on" data-cat="invalid">Invalid values</span>
-      <span class="chip on" data-cat="auth">Auth / unauthorized</span>
-      <span class="chip on" data-cat="boundary">Boundary / edge</span>
-      <span class="chip on" data-cat="injection">Injection / security</span>
-      <span class="chip" data-cat="perf">Performance / load</span>
-      <span class="chip" data-cat="idempotency">Idempotency</span>
-      <span class="chip" data-cat="format">Content-type / format</span>
-    </div>
-    <label style="margin-top:14px">Extra context / business rules</label>
-    <textarea id="extra" style="min-height:50px" placeholder="e.g. id must be 1-100. Email must be unique. Age must be 18-99."></textarea>
-  </div>
-
-  <div class="actions">
-    <button class="pri" onclick="generate()" id="genBtn">
-      <span id="spin" style="display:none" class="spinner"></span>
-      <span id="genTxt">Generate test cases</span>
-    </button>
-    <button class="sec" onclick="clearAll()">Clear</button>
-  </div>
-
-  <div id="err" class="err"></div>
-  <div id="ok" class="ok"></div>
-
-  <div id="result-area" style="margin-top:1.5rem">
-    <div class="stats">
-      <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Total</div></div>
-      <div class="stat"><div class="stat-n" id="s-pos">0</div><div class="stat-l">Positive</div></div>
-      <div class="stat"><div class="stat-n" id="s-neg">0</div><div class="stat-l">Negative</div></div>
-      <div class="stat"><div class="stat-n" id="s-sec">0</div><div class="stat-l">Security</div></div>
-    </div>
-    <div class="export-bar">
-      <button class="sec" onclick="exportPostman()">⬇ Export Postman collection</button>
-      <button class="sec" onclick="exportCSV()">⬇ Export CSV</button>
-      <button class="sml" onclick="copyJSON()">Copy JSON</button>
-    </div>
-    <div class="filter-bar">
-      <span>Filter:</span>
-      <button class="filter-btn active" data-f="all" onclick="applyFilter(this)">All</button>
-      <button class="filter-btn" data-f="happy" onclick="applyFilter(this)">Positive</button>
-      <button class="filter-btn" data-f="negative" onclick="applyFilter(this)">Negative</button>
-      <button class="filter-btn" data-f="security" onclick="applyFilter(this)">Security</button>
-    </div>
-    <div id="cases-container"></div>
-  </div>
-</div>
+  </div><!-- /main -->
+</div><!-- /layout -->
 
 <script>
-let cases = [];
-let currentFilter = 'all';
+// ── STATE ──────────────────────────────────
+let history = JSON.parse(localStorage.getItem('qa_api_history') || '[]');
+renderHistory();
 
-document.querySelectorAll('.chip').forEach(c => c.onclick = () => c.classList.toggle('on'));
+// ── METHOD COLOR ───────────────────────────
+function updateMethodColor() {
+  const m = document.getElementById('method');
+  m.className = 'method-select ' + m.value;
+}
+updateMethodColor();
 
-function toggleAuth() {
-  const v = document.getElementById('auth').value;
-  const d = document.getElementById('auth-detail');
-  if (v === 'none') { d.style.display = 'none'; return; }
-  d.style.display = '';
-  const map = { bearer:'Bearer token', basic:'username:password', apikey:'API key value', apikey_q:'API key value' };
-  document.getElementById('auth-label').textContent = map[v] || 'Value';
+// ── AUTH ───────────────────────────────────
+let currentAuthType = 'none';
+
+function switchAuth(type, btn) {
+  currentAuthType = type;
+  document.querySelectorAll('.auth-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.auth-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('auth-' + type).classList.add('active');
 }
-function addHeader() {
-  const d = document.createElement('div'); d.className = 'hrow';
-  d.innerHTML = '<input placeholder="Key" class="hk"/><input placeholder="Value" class="hv"/><button class="rm" onclick="rmRow(this)">✕</button>';
-  document.getElementById('headers-list').appendChild(d);
+
+function toggleVisibility(id, btn) {
+  const el = document.getElementById(id);
+  if (el.type === 'password') { el.type = 'text'; btn.textContent = '🙈'; }
+  else { el.type = 'password'; btn.textContent = '👁'; }
 }
-function addParam() {
-  const d = document.createElement('div'); d.className = 'hrow';
-  d.innerHTML = '<input placeholder="Name" class="pk"/><input placeholder="Value" class="pv"/><button class="rm" onclick="rmRow(this)">✕</button>';
-  document.getElementById('params-list').appendChild(d);
+
+function getAuthHeaders() {
+  const headers = {};
+  if (currentAuthType === 'bearer') {
+    const token = document.getElementById('bearerToken').value.trim();
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+  } else if (currentAuthType === 'basic') {
+    const user = document.getElementById('basicUser').value.trim();
+    const pass = document.getElementById('basicPass').value.trim();
+    if (user) headers['Authorization'] = 'Basic ' + btoa(user + ':' + pass);
+  } else if (currentAuthType === 'apikey') {
+    const loc = document.getElementById('apiKeyLocation').value;
+    const name = document.getElementById('apiKeyName').value.trim();
+    const val  = document.getElementById('apiKeyValue').value.trim();
+    if (loc === 'header' && name && val) headers[name] = val;
+  }
+  return headers;
 }
-function rmRow(btn) { btn.parentElement.remove(); }
+
+function getAuthQueryParam() {
+  if (currentAuthType === 'apikey') {
+    const loc  = document.getElementById('apiKeyLocation').value;
+    const name = document.getElementById('apiKeyName').value.trim();
+    const val  = document.getElementById('apiKeyValue').value.trim();
+    if (loc === 'query' && name && val) return { [name]: val };
+  }
+  return {};
+}
+
+// ── TABS ───────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── HEADERS ────────────────────────────────
+function addHeaderRow() {
+  const c = document.getElementById('headersContainer');
+  const row = document.createElement('div');
+  row.className = 'header-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Key"/>
+    <input type="text" placeholder="Value"/>
+    <button class="icon-btn" onclick="removeHeaderRow(this)">×</button>`;
+  c.appendChild(row);
+}
+function addParamRow() {
+  const c = document.getElementById('paramsContainer');
+  const row = document.createElement('div');
+  row.className = 'header-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Key"/>
+    <input type="text" placeholder="Value"/>
+    <button class="icon-btn" onclick="removeHeaderRow(this)">×</button>`;
+  c.appendChild(row);
+}
+function removeHeaderRow(btn) {
+  btn.parentElement.remove();
+}
+
 function getHeaders() {
-  return [...document.querySelectorAll('#headers-list .hrow')].map(r=>({key:r.querySelector('.hk').value.trim(),val:r.querySelector('.hv').value.trim()})).filter(x=>x.key);
+  const rows = document.querySelectorAll('#headersContainer .header-row');
+  const headers = {};
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) headers[k] = v;
+  });
+  return headers;
 }
+
+// ── PARAMS ─────────────────────────────────
 function getParams() {
-  return [...document.querySelectorAll('#params-list .hrow')].map(r=>({key:r.querySelector('.pk').value.trim(),val:r.querySelector('.pv').value.trim()})).filter(x=>x.key);
-}
-function getCategories() { return [...document.querySelectorAll('.chip.on')].map(c=>c.dataset.cat); }
-function showErr(msg) { const e=document.getElementById('err'); e.innerHTML=msg; e.style.display=''; document.getElementById('ok').style.display='none'; }
-function showOk(msg) { const o=document.getElementById('ok'); o.textContent=msg; o.style.display=''; document.getElementById('err').style.display='none'; }
-function clearAll() {
-  document.getElementById('result-area').style.display='none';
-  document.getElementById('cases-container').innerHTML='';
-  document.getElementById('err').style.display='none';
-  document.getElementById('ok').style.display='none';
-  cases=[];
+  const rows = document.querySelectorAll('#paramsContainer .header-row');
+  const params = {};
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) params[k] = v;
+  });
+  return params;
 }
 
-async function generate() {
-  const apiKey = document.getElementById('apiKey').value.trim();
-  const baseUrl = document.getElementById('baseUrl').value.trim();
-  const endpoint = document.getElementById('endpoint').value.trim();
-  const method = document.getElementById('method').value;
-  const auth = document.getElementById('auth').value;
-  const authVal = document.getElementById('auth-val').value.trim();
-  const body = document.getElementById('body').value.trim();
-  const expected = document.getElementById('expected').value.trim();
-  const extra = document.getElementById('extra').value.trim();
-  const cats = getCategories();
-  const headers = getHeaders();
+function buildURL(base) {
   const params = getParams();
+  const keys = Object.keys(params);
+  if (!keys.length) return base;
+  // Remove existing query string duplication
+  const url = new URL(base.includes('?') ? base : base);
+  keys.forEach(k => url.searchParams.set(k, params[k]));
+  return url.toString();
+}
 
-  if (!apiKey) { showErr('Enter your Gemini API key. Get one free at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>'); return; }
-  if (!endpoint) { showErr('Enter an endpoint path e.g. /users/{id}'); return; }
-  if (!cats.length) { showErr('Select at least one test category.'); return; }
+// ── FORMAT JSON ────────────────────────────
+function formatJSON() {
+  const ta = document.getElementById('bodyInput');
+  try {
+    ta.value = JSON.stringify(JSON.parse(ta.value), null, 2);
+  } catch(e) {
+    alert('❌ Invalid JSON — please check your body!');
+  }
+}
+function clearBody() {
+  document.getElementById('bodyInput').value = '';
+}
 
-  document.getElementById('spin').style.display = 'inline-block';
-  document.getElementById('genTxt').textContent = 'Generating...';
-  document.getElementById('genBtn').disabled = true;
-  document.getElementById('err').style.display = 'none';
-  document.getElementById('ok').style.display = 'none';
+// ── SYNTAX HIGHLIGHT ───────────────────────
+function highlight(json) {
+  if (typeof json !== 'string') json = JSON.stringify(json, null, 2);
+  return json
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+      if (/^"/.test(m)) {
+        if (/:$/.test(m)) return `<span class="json-key">${m}</span>`;
+        return `<span class="json-str">${m}</span>`;
+      }
+      if (/true|false/.test(m)) return `<span class="json-bool">${m}</span>`;
+      if (/null/.test(m)) return `<span class="json-null">${m}</span>`;
+      return `<span class="json-num">${m}</span>`;
+    });
+}
 
-  const prompt = `You are a senior QA engineer. Generate comprehensive API test cases.
+// ── SEND REQUEST ───────────────────────────
+async function sendRequest() {
+  const method  = document.getElementById('method').value;
+  const rawUrl  = document.getElementById('urlInput').value.trim();
+  const body    = document.getElementById('bodyInput').value.trim();
+  const headers = getHeaders();
 
-API Details:
-- Base URL: ${baseUrl||'https://api.example.com'}
-- Endpoint: ${endpoint}
-- Method: ${method}
-- Auth: ${auth}${authVal?' | value: '+authVal:''}
-- Headers: ${headers.length?JSON.stringify(headers):'none'}
-- Params: ${params.length?JSON.stringify(params):'none'}
-- Body example: ${body||'N/A'}
-- Expected success status: ${expected||'200'}
-- Business rules: ${extra||'none'}
-- Categories: ${cats.join(', ')}
+  if (!rawUrl) { alert('Please enter a URL!'); return; }
 
-Return ONLY a raw JSON array. No markdown, no code fences, no explanation.
-Each item must follow this shape exactly:
-{"id":"TC001","name":"short name","category":"happy|negative|security|performance","description":"what is tested","method":"${method}","endpoint":"${endpoint}","headers":{},"params":{},"body":null,"expectedStatus":200,"assertions":["status is 200"],"notes":""}
+  // Merge auth query params with regular params
+  const authQP = getAuthQueryParam();
+  const allParams = { ...getParams(), ...authQP };
 
-Generate 15-25 test cases. Cover: happy path, missing fields, invalid types, boundary values (min/max/zero/negative/null/empty), auth failures, SQL injection, XSS, path traversal, special characters, unicode.
-Return ONLY the JSON array.`;
+  // Build final URL with params
+  let url = rawUrl;
+  try {
+    const base = new URL(rawUrl);
+    Object.entries(allParams).forEach(([k,v]) => base.searchParams.set(k,v));
+    url = base.toString();
+  } catch(e) {}
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending...';
+
+  // Show loading
+  document.getElementById('responsePanel').innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      Sending request to <strong>${url.split('?')[0]}</strong> ...
+    </div>`;
+
+  const startTime = Date.now();
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          contents: [{parts:[{text:prompt}]}],
-          generationConfig: {temperature:0.3, maxOutputTokens:8192}
-        })
-      }
-    );
-    if (!res.ok) {
-      const err = await res.json();
-      const msg = err?.error?.message || res.statusText;
-      if (res.status===400||res.status===403) showErr('Invalid API key: ' + msg);
-      else if (res.status===429) showErr('Rate limit hit — wait a moment and try again.');
-      else showErr('Gemini error ' + res.status + ': ' + msg);
-      return;
+    const options = { method, headers: { ...headers, ...getAuthHeaders() } };
+    if (['POST','PUT','PATCH'].includes(method) && body) {
+      options.body = body;
     }
-    const data = await res.json();
-    let text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    text = text.replace(/```json|```/g,'').trim();
-    const s = text.indexOf('['), e = text.lastIndexOf(']');
-    if (s !== -1 && e !== -1) text = text.slice(s, e+1);
-    cases = JSON.parse(text);
-    renderResults();
-    showOk('✓ ' + cases.length + ' test cases generated!');
-  } catch(e) {
-    if (e instanceof SyntaxError) showErr('Could not parse response. Try again.');
-    else showErr('Error: ' + e.message);
-    console.error(e);
-  } finally {
-    document.getElementById('spin').style.display = 'none';
-    document.getElementById('genTxt').textContent = 'Generate test cases';
-    document.getElementById('genBtn').disabled = false;
+
+    const res = await fetch(url, options);
+    const elapsed = Date.now() - startTime;
+    const resText = await res.text();
+    let resData = null;
+    let isJSON = false;
+
+    try { resData = JSON.parse(resText); isJSON = true; } catch(e) {}
+
+    const size = new Blob([resText]).size;
+    const sizeStr = size > 1024 ? (size/1024).toFixed(1) + ' KB' : size + ' B';
+
+    // Status class
+    const sc = res.status;
+    const sClass = sc < 300 ? 's2xx' : sc < 400 ? 's3xx' : sc < 500 ? 's4xx' : 's5xx';
+
+    // Response headers
+    const resHeaders = {};
+    res.headers.forEach((v,k) => resHeaders[k] = v);
+
+    // Save to history
+    saveHistory({ method, url: rawUrl, status: sc, time: elapsed, ok: res.ok });
+
+    // Render response
+    document.getElementById('responsePanel').innerHTML = `
+      <div class="response-header">
+        <span class="response-title">RESPONSE</span>
+        <span class="status-badge ${sClass}">${sc} ${res.statusText}</span>
+        <span class="time-badge">⏱ ${elapsed}ms</span>
+        <span class="size-badge">📦 ${sizeStr}</span>
+        <button class="copy-btn" onclick="copyResponse()">📋 Copy</button>
+      </div>
+
+      <div class="response-tabs">
+        <button class="tab active" onclick="switchRespTab('body', this)">Body</button>
+        <button class="tab" onclick="switchRespTab('headers', this)">Response Headers</button>
+        <button class="tab" onclick="switchRespTab('raw', this)">Raw</button>
+      </div>
+
+      <div id="resp-body" class="tab-content active">
+        <pre id="prettyBody">${isJSON ? highlight(resData) : escapeHTML(resText)}</pre>
+      </div>
+      <div id="resp-headers" class="tab-content">
+        <pre>${highlight(resHeaders)}</pre>
+      </div>
+      <div id="resp-raw" class="tab-content">
+        <pre id="rawBody">${escapeHTML(resText)}</pre>
+      </div>`;
+
+  } catch(err) {
+    const elapsed = Date.now() - startTime;
+    saveHistory({ method, url: rawUrl, status: 'ERR', time: elapsed, ok: false });
+    document.getElementById('responsePanel').innerHTML = `
+      <div class="response-header">
+        <span class="response-title">RESPONSE</span>
+        <span class="status-badge s5xx">Network Error</span>
+        <span class="time-badge">⏱ ${elapsed}ms</span>
+      </div>
+      <div class="error-box">
+        ❌ <strong>Request Failed</strong><br/><br/>
+        ${escapeHTML(err.message)}<br/><br/>
+        <strong>Possible reasons:</strong><br/>
+        • CORS policy blocked the request<br/>
+        • Network unavailable / wrong URL<br/>
+        • API server is down<br/>
+        • Invalid API key
+      </div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '▶ Send';
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── RESPONSE TABS ──────────────────────────
+function switchRespTab(name, btn) {
+  document.querySelectorAll('.response-tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#responsePanel .tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('resp-' + name).classList.add('active');
+}
+
+// ── COPY RESPONSE ─────────────────────────
+function copyResponse() {
+  const raw = document.getElementById('rawBody') || document.getElementById('prettyBody');
+  if (raw) {
+    navigator.clipboard.writeText(raw.innerText)
+      .then(() => alert('✅ Response copied to clipboard!'))
+      .catch(() => alert('Copy failed — please manually select and copy.'));
   }
 }
 
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function statusBadge(s){
-  if(s>=200&&s<300)return`<span class="badge b-green">${s}</span>`;
-  if(s>=400&&s<500)return`<span class="badge b-yellow">${s}</span>`;
-  if(s>=500)return`<span class="badge b-red">${s}</span>`;
-  return`<span class="badge b-gray">${s}</span>`;
-}
-function catBadge(c){
-  const m={happy:'b-green',positive:'b-green',negative:'b-yellow',security:'b-red',performance:'b-blue'};
-  return`<span class="badge ${m[c]||'b-gray'}">${c}</span>`;
-}
-function applyFilter(btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  currentFilter=btn.dataset.f;
-  renderCases();
-}
-function renderCases(){
-  const c=document.getElementById('cases-container');
-  c.innerHTML='';
-  const filtered=currentFilter==='all'?cases:cases.filter(tc=>{
-    if(currentFilter==='happy') return tc.category==='happy'||tc.category==='positive';
-    return tc.category===currentFilter;
-  });
-  filtered.forEach(tc=>{
-    const bodyStr=tc.body&&typeof tc.body==='object'?JSON.stringify(tc.body,null,2):(tc.body&&tc.body!=='null'?String(tc.body):null);
-    const div=document.createElement('div');
-    div.className='tcase';
-    div.innerHTML=`<div class="tcase-head"><span class="tcase-id">${esc(tc.id)}</span><span class="tcase-name">${esc(tc.name)}</span>${catBadge(tc.category)} ${statusBadge(tc.expectedStatus)}</div>
-<div class="tcase-desc">${esc(tc.description)}</div>
-${tc.assertions?.length?`<div class="tcase-assert">✓ ${tc.assertions.map(esc).join(' · ')}</div>`:''}
-${bodyStr?`<div class="tcase-body">${esc(bodyStr)}</div>`:''}
-${tc.notes?`<div class="tcase-note">💡 ${esc(tc.notes)}</div>`:''}`;
-    c.appendChild(div);
-  });
-}
-function renderResults(){
-  document.getElementById('s-total').textContent=cases.length;
-  document.getElementById('s-pos').textContent=cases.filter(c=>c.category==='happy'||c.category==='positive').length;
-  document.getElementById('s-neg').textContent=cases.filter(c=>c.category==='negative').length;
-  document.getElementById('s-sec').textContent=cases.filter(c=>c.category==='security').length;
-  renderCases();
-  document.getElementById('result-area').style.display='';
-  setTimeout(()=>document.getElementById('result-area').scrollIntoView({behavior:'smooth'}),100);
+// ── HISTORY ───────────────────────────────
+function saveHistory(item) {
+  item.timestamp = new Date().toLocaleTimeString();
+  history.unshift(item);
+  if (history.length > 30) history = history.slice(0, 30);
+  localStorage.setItem('qa_api_history', JSON.stringify(history));
+  renderHistory();
 }
 
-function exportPostman(){
-  const base=document.getElementById('baseUrl').value.trim()||'https://api.example.com';
-  const authType=document.getElementById('auth').value;
-  const authVal=document.getElementById('auth-val').value.trim();
-  const items=cases.map(tc=>{
-    const hdrs=Object.entries(tc.headers||{}).map(([k,v])=>({key:k,value:String(v)}));
-    if(authType==='bearer'&&authVal) hdrs.push({key:'Authorization',value:'Bearer '+authVal});
-    if(authType==='apikey'&&authVal) hdrs.push({key:'X-API-Key',value:authVal});
-    if(tc.body) hdrs.push({key:'Content-Type',value:'application/json'});
-    const fullUrl=base+tc.endpoint;
-    const proto=fullUrl.split('://')[0];
-    const rest=(fullUrl.split('://')[1]||'');
-    const host=rest.split('/')[0].split('.');
-    const path=tc.endpoint.split('/').filter(Boolean);
-    const urlObj={raw:fullUrl,protocol:proto,host,path};
-    if(tc.params&&Object.keys(tc.params).length) urlObj.query=Object.entries(tc.params).map(([k,v])=>({key:k,value:String(v)}));
-    const testLines=[`pm.test("Status is ${tc.expectedStatus}",function(){pm.response.to.have.status(${tc.expectedStatus});});`,...(tc.assertions||[]).map(a=>`// ${a}`)];
-    return{
-      name:`${tc.id} - ${tc.name}`,
-      request:{method:tc.method||'GET',header:hdrs,url:urlObj,...(tc.body?{body:{mode:'raw',raw:typeof tc.body==='object'?JSON.stringify(tc.body,null,2):String(tc.body),options:{raw:{language:'json'}}}}:{})},
-      event:[{listen:'test',script:{exec:testLines,type:'text/javascript'}}]
-    };
-  });
-  const col={info:{name:`API Tests — ${document.getElementById('endpoint').value}`,schema:'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'},item:items};
-  download('postman_collection.json',JSON.stringify(col,null,2),'application/json');
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if (!history.length) {
+    el.innerHTML = '<div class="no-history">No requests yet.<br/>Send your first API call!</div>';
+    return;
+  }
+  el.innerHTML = history.map((h, i) => `
+    <div class="history-item" onclick="loadHistory(${i})">
+      <span class="method-pill ${h.method}">${h.method}</span>
+      <div>
+        <div class="url-text">${h.url.replace(/key=[^&]+/, 'key=***')}</div>
+        <div style="font-size:0.68rem;color:var(--muted);margin-top:3px;">
+          ${h.timestamp} · ${h.time}ms
+        </div>
+      </div>
+      <div class="status-dot" style="background:${h.ok ? 'var(--success)' : 'var(--danger)'}"></div>
+    </div>`).join('');
 }
-function exportCSV(){
-  const rows=[['ID','Name','Category','Method','Endpoint','Expected Status','Description','Assertions','Notes']];
-  cases.forEach(tc=>rows.push([tc.id,tc.name,tc.category,tc.method,tc.endpoint,tc.expectedStatus,tc.description,(tc.assertions||[]).join('; '),tc.notes||'']));
-  download('test_cases.csv',rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n'),'text/csv');
+
+function loadHistory(i) {
+  const h = history[i];
+  document.getElementById('urlInput').value = h.url;
+  document.getElementById('method').value = h.method;
+  updateMethodColor();
 }
-function copyJSON(){
-  navigator.clipboard.writeText(JSON.stringify(cases,null,2)).then(()=>{showOk('JSON copied!');setTimeout(()=>document.getElementById('ok').style.display='none',2000);});
+
+function clearHistory() {
+  if (confirm('Clear all history?')) {
+    history = [];
+    localStorage.removeItem('qa_api_history');
+    renderHistory();
+  }
 }
-function download(name,content,type){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([content],{type}));
-  a.download=name;a.click();
-}
+
+// ── KEYBOARD SHORTCUT (Ctrl+Enter to send) ─
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') sendRequest();
+});
 </script>
 </body>
 </html>
